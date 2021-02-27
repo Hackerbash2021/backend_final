@@ -107,12 +107,16 @@ def fetchExams(request):
 
     # student = Student.objects.get(id=studentId)
 
-    exams = Exam.filter(org_class_id=organizationClassId)
+    exams = Exam.objects.filter(org_class_id=organizationClassId)
     # ser exams => data
-    serialzer = ExamSerializer(data=exams)
-    data = serialzer.data
-
-    return Response(status=status.HTTP_200_OK, data=data)
+    if exams.count() !=0 :
+        serializer = ExamSerializer(data=exams)
+        data = serializer.data
+        return Response(status=status.HTTP_200_OK, data=data)
+    else:
+        return Response(
+        data="No exams yet", status=status.HTTP_400_BAD_REQUEST
+    )
 
 
 # FROM THE POV OF ADMIN/INSTITUTE
@@ -156,14 +160,50 @@ def signUpInstitute(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view()
+@api_view(["POST"])
 def signInInstitute(request):
-    return Response(status=status.HTTP_200_OK, data={"message": "Heyy!"})
+    if request.method == "POST":
+        email = request.data.get("email")
+        password = request.data.get("password")
+        admin = authenticate(request, email=email, password=password)
+        if admin is not None:
+            login(request, admin)
+            return HttpResponse()
+        elif Admin.objects.filter(email=email).count():
+            inst = Admin.objects.get(email=email)
+            if Admin.check_password(inst, password):
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def joinOrgClass(request):
+    code = request.data.get('code')
+    email = request.data.get('email')
+    org_class=OrgClass.objects.get(class_code = code)
+    org = org_class.organization
+    student = Student.objects.get(email = email)
+    data = {
+        user:student,
+        org_class:org_class,
+        organization: org,
+    }
+    serializer = UserClassSerializer(data = data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['GET','PUT','POST','DELETE'])
 def crudClass(request): 
+    
     if request.method == "GET":
-        pass
+        
     elif request.method == 'PUT':
         pass
     elif request.method == 'POST':
@@ -174,27 +214,88 @@ def crudClass(request):
 
 @api_view(['GET','PUT','POST','DELETE'])
 def crudStudent(request):
-    email = request.data.get('email')
     if request.method == "GET":
+        class_id = request.data.get('class_id')
+        students = Student.objects.filter(org_class_id=class_id)
+        if students.count() !=0 :
+            serializer = StudentSerializer(data=students)
+            data = serializer.data
+            return Response(status=status.HTTP_200_OK, data=data)
+        else:
+            return Response(
+            data="No students yet", status=status.HTTP_400_BAD_REQUEST
+        )
     elif request.method == 'PUT':
-        pass
+        user_id = request.data.get('user_id')
+        user = Student.objects.get(id = exam_id)
+        if(request.data.get('name') not in ["",None]):
+            exam.name = request.data.get('name')
+        if(request.data.get('email') not in ["",None]):
+            exam.description = request.data.get('description')
+        if(request.data.get('phone') not in ["",None]):
+            exam.date = request.data.get('date')
+        
+        user.save()
+        return Response()
     elif request.method == 'POST':
         pass
     elif request.method =='DELETE':
+        user_id = request.data.get('user_id')
+        user = Student.objects.get(id = user_id)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
         pass
 
 @api_view(['GET','PUT','POST','DELETE'])
 def crudExam(request):
-    email = request.data.get('email')
     if request.method == "GET":
-        pass
-    elif request.method == 'PUT':
-        pass
-    elif request.method == 'POST':
-        pass
-    elif request.method =='DELETE':
-        pass
+        class_id = request.data.get('class_id')
+        exams = Exam.objects.filter(org_class_id=class_id)
+        # ser exams => data
+        if exams.count() !=0 :
+            serializer = ExamSerializer(data=exams)
+            data = serializer.data
+            return Response(status=status.HTTP_200_OK, data=data)
+        else:
+            return Response(
+            data="No exams yet", status=status.HTTP_400_BAD_REQUEST
+        )
 
-# @api_view(['DELETE'])
-# def removeExam(request):
-#     pass
+    elif request.method == 'PUT':
+        exam_id = request.data.get('exam_id')
+        exam = Exam.objects.get(id = exam_id)
+        if(request.data.get('name') not in ["",None]):
+            exam.name = request.data.get('name')
+        if(request.data.get('description') not in ["",None]):
+            exam.description = request.data.get('description')
+        if(request.data.get('date') not in ["",None]):
+            exam.date = request.data.get('date')
+        
+        exam.save()
+        return Response()
+
+    elif request.method == 'POST':
+        name = request.data.get('name')
+        description = request.data.get('description')
+        date = request.data.get('date')
+        class_id = request.data.get('class_id')
+        org_class = OrgClass.objects.get(id = class_id)
+        data = {
+            exam_name:name,
+            description: description,
+            date:date,
+            organization: org_class.organization,
+            org_class = class_id
+        }
+        serializer = ExamSerializer(data = data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    elif request.method =='DELETE':
+        exam_id = request.data.get('exam_id')
+        exam = Exam.objects.get(id = exam_id)
+        exam.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
