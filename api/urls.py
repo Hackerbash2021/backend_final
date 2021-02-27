@@ -17,12 +17,12 @@ urlpatterns = [
     # Admin
     path("signUpInstitute/", views.signUpInstitute),
     path("signInInstitute/", views.signInInstitute),
-    path("addClass/", views.addClass),
-    path("removeClass/", views.removeClass),
-    path("addStudent/", views.addStudent),
-    path("removeStudent/", views.removeStudent),
-    path("addExam/", views.addExam),
-    path("removeExam/", views.removeExam),
+    path("crudClass/", views.crudClass),
+    # path("removeClass/", views.removeClass),
+    # path("addStudent/", views.addStudent),
+    path("crudStudent/", views.crudStudent),
+    path("crudExam/", views.crudExam),
+    # path("removeExam/", views.removeExam),
 
     # Common 
     path("signOut/", views.signOut),
