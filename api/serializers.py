@@ -3,7 +3,7 @@ from .models import (
     Organization,
     OrgClass,
     Exam,
-    User,
+    Student,
     Admin,
 )
 
@@ -32,9 +32,9 @@ class Exam(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class UserSerializer(serializers.ModelSerializer):
+class StudentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Student
         fields = "__all__"
 
 

@@ -4,8 +4,8 @@ from . import views
 
 urlpatterns = [
     # User
-    path("signInUser/", views.signInUser),
-    path("signUpUser/", views.signUpUser),
+    path("signInStudent/", views.signInStudent),
+    path("signUpStudent/", views.signUpStudent),
     path("joinClass/", views.joinClass)
     path("fetchOrg/",view.fetchOrg),
     path("fetchExams/", views.fetchExams),
@@ -26,6 +26,6 @@ urlpatterns = [
 
     # Common 
     path("signOut/", views.signOut),
-
+    
   
 ]

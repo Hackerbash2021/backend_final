@@ -8,17 +8,17 @@ from django.contrib.auth.models import (
 
 # Create your models here.
 class Organization(models.Model):
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=10)
+    org_name = models.CharField(max_length=100)
     accessibility = models.BooleanField(default=False)  # false-public true-private
     class_count = models.IntegerField()
     org_type = models.CharField(max_length=50)
 
 
 class Admin(models.Model):
-    name = models.CharField(max_length=30)
+    admin_name = models.CharField(max_length=30)
     email = models.EmailField()
     password = models.CharField(max_length=30)
+    phone = models.CharField(max_length=10)
     organization = models.OneToOneField(Organization, on_delete=models.CASCADE)
 
 
@@ -45,5 +45,6 @@ class Student(models.Model):
 
 
 class UserClass(models.Model):
+    user = models.ForeignKey(Student,on_delete = models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING)
     org_class = models.ForeignKey(OrgClass, on_delete=models.DO_NOTHING)
