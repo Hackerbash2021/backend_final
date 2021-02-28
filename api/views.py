@@ -18,18 +18,19 @@ import random
 
 # Create your views here.
 
+
 @api_view()
 def whoAmI(request):
     try:
-        user = Student.objects.get(user=request.user)
-        if t is not None:
-            user = 'student'
+        user = Student.objects.get(email=request.user.email)
+        user = 'student'
     except:
         user = 'orgadmin'
     print(user)
-    return Response(status=status.HTTP_200_OK ,data={userType: user})
+    return Response(status=status.HTTP_200_OK, data={'userType': user})
 
 # FROM THE POV OF STUDENT
+
 
 @api_view(["POST"])
 def signUpStudent(request):
@@ -473,5 +474,6 @@ def crudExam(request):
 
 @api_view()
 def signOut(request):
+    print('logged out')
     logout(request)
     return Response(status=status.HTTP_200_OK)
