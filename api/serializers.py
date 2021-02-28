@@ -4,7 +4,8 @@ from .models import (
     OrgClass,
     Exam,
     Student,
-    Admin,
+    OrgAdmin,
+    UserClass
 )
 
 
@@ -16,7 +17,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Admin
+        model = OrgAdmin
         fields = "__all__"
 
 

@@ -1,0 +1,8 @@
+{
+    "name": "Hackerbash",
+    "theme_color": "#1100d1",
+    "background_color": "#eeeeee",
+    "display": "minimal-ui",
+    "scope": "/",
+    "start_url": "/"
+  }
